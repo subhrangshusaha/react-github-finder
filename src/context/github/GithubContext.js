@@ -5,8 +5,9 @@ import githubReducer from "./GithubReducer";
 
 const GithubContext = createContext();
 
-const GITHUB_URL = process.env.REACT_APP_GITHUB_URL;
-const GITHUB_TOKEN = process.env.REACT_APP_GITHUB_TOKEN;
+// Not required anymore as functions have been moved to GithubActions.js
+// const GITHUB_URL = process.env.REACT_APP_GITHUB_URL;
+// const GITHUB_TOKEN = process.env.REACT_APP_GITHUB_TOKEN;
 
 export const GithubProvider = ({children}) => {
 	// Removed as reducer is being used
@@ -15,7 +16,9 @@ export const GithubProvider = ({children}) => {
 
 	const initialState = {
 		users: [],
+		user: {},
 		isLoading: false,
+		repos: [],
 	};
 
 	const [state, dispatch] = useReducer(githubReducer, initialState);
@@ -42,50 +45,105 @@ export const GithubProvider = ({children}) => {
 	// };
 
 
-	const searchUsers = async (text) => {
-		setLoading();
+	// Search for matching Users - added to GithubActions.js
+	// const searchUsers = async (text) => {
+	// 	setLoading();
 
-		const params = new URLSearchParams({
-			q: text
-		})
-	
-		const response = await fetch(`${GITHUB_URL}/search/users?${params}`, {
-				headers: {
-					Authorization: `token ${GITHUB_TOKEN}`
-				}
-		});
+	// 	const params = new URLSearchParams({
+	// 		q: text
+	// 	})
 
-		// const data = await response.json();
-		const { items } = await response.json();
+	// 	const response = await fetch(`${GITHUB_URL}/search/users?${params}`, {
+	// 			headers: {
+	// 				Authorization: `token ${GITHUB_TOKEN}`
+	// 			}
+	// 	});
 
-		// Removed as reducer is being used
-		// setUsers(data);
-		// setIsLoading(false);
+	// 	// const data = await response.json();
+	// 	const { items } = await response.json();
 
-		dispatch({
-			type: 'GET_USERS',
-			// payload: data,
-			payload: items,
-		});
-	};
+	// 	// Removed as reducer is being used
+	// 	// setUsers(data);
+	// 	// setIsLoading(false);
 
-	// Clear Users from State
-	const clearUsers = () => dispatch({ type: 'CLEAR_USERS' });
+	// 	dispatch({
+	// 		type: 'GET_USERS',
+	// 		// payload: data,
+	// 		payload: items,
+	// 	});
+	// };
 
-	// Set Loading
-	const setLoading = () => dispatch({type: 'SET_LOADING'});
+	// Get single user profile - added to GithubActions.js
+	// const getUser = async (login) => {
+	// 	setLoading();
+
+	// 	const response = await fetch(`${GITHUB_URL}/users/${login}`, {
+	// 			headers: {
+	// 				Authorization: `token ${GITHUB_TOKEN}`
+	// 			}
+	// 	});
+
+	// 	if(response.status === 404) {
+	// 		window.location = '/notfound'
+	// 	} else {
+	// 		const data = await response.json();
+
+	// 		dispatch({
+	// 			type: 'GET_USER',
+	// 			payload: data,
+	// 		});
+	// 	}
+	// };
+
+	// Get User Repos - added to GithubActions.js
+	// const getRepos = async (login) => {
+	// 	setLoading();
+
+	// 	const params = new URLSearchParams({
+	// 		sort: 'created',
+	// 		per_page: 10,
+	// 	})
+
+	// 	const response = await fetch(`${GITHUB_URL}/users/${login}/repos?${params}`, {
+	// 			headers: {
+	// 				Authorization: `token ${GITHUB_TOKEN}`
+	// 			}
+	// 	});
+
+	// 	const data = await response.json();
+
+	// 	dispatch({
+	// 		type: 'GET_REPOS',
+	// 		payload: data,
+	// 	});
+	// };
+
+	// Clear Users from State - not required anymore
+	// const clearUsers = () => dispatch({ type: 'CLEAR_USERS' });
+
+	// Set Loading - not required anymore
+	// const setLoading = () => dispatch({type: 'SET_LOADING'});
 
 	return (
 		<GithubContext.Provider value={{
 			// Removed as reducer is being used
 			// users,
 			// isLoading,
-			
-			users: state.users,
-			isLoading: state.isLoading,
+
+			// users: state.users,
+			// isLoading: state.isLoading,
+			// user: state.user,
+			// repos: state.repos,
+
+			...state,
+
 			// fetchUsers,
-			searchUsers,
-			clearUsers,
+			// searchUsers,
+			// clearUsers,
+			// getUser,
+			// getRepos,
+
+			dispatch,
 		}}>
 			{children}
 		</GithubContext.Provider>
